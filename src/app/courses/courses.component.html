@@ -1,0 +1,98 @@
+<main class="courses-page">
+    <header class="courses-page__header">
+        <div>
+            <p class="courses-page__eyebrow">Learning library</p>
+            <h1>Explore courses</h1>
+        </div>
+
+        <div class="courses-page__actions">
+            <label class="visually-hidden" for="course-search">Search courses</label>
+            <input
+                id="course-search"
+                class="form-control courses-page__search"
+                type="search"
+                placeholder="Search courses"
+                [value]="searchTerm"
+                (input)="onSearch($any($event.target).value)" />
+            <button type="button" class="btn btn-primary" (click)="openCreateForm()">
+                Create course
+            </button>
+        </div>
+    </header>
+
+    <section class="course-grid" aria-label="Available courses">
+        <app-course-card
+            *ngFor="let course of filterCourses((courses$ | async) || [])"
+            [course]="course"
+            (edit)="onEdit($event)"
+            (delete)="onDelete($event)"
+            (information)="onInformation($event)">
+        </app-course-card>
+    </section>
+
+    <div *ngIf="newCourse && (isCreateFormOpen || isEditFormOpen)" class="modal fade show" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="create-course-title">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="create-course-title" class="modal-title">Create course</h2>
+                    <button type="button" class="btn-close" aria-label="Close" (click)="closeCreateForm()"></button>
+                </div>
+
+                <form #courseForm="ngForm" (ngSubmit)="onCreateCourse(courseForm)">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label" for="course-title">Title</label>
+                                <input id="course-title" class="form-control" type="text" name="title" [(ngModel)]="newCourse.title" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="course-category">Category</label>
+                                <input id="course-category" class="form-control" type="text" name="catagory" [(ngModel)]="newCourse.catagory" required />
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label" for="course-author">Author</label>
+                                <input id="course-author" class="form-control" type="text" name="author" [(ngModel)]="newCourse.author" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="course-price">Price</label>
+                                <input id="course-price" class="form-control" type="number" name="price" min="0" step="0.01" [(ngModel)]="newCourse.price" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="course-image">Image URL</label>
+                                <input id="course-image" class="form-control" type="url" name="imageUrl" [(ngModel)]="newCourse.imageUrl" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="course-description">Description</label>
+                                <textarea id="course-description" class="form-control" name="description" rows="4" [(ngModel)]="newCourse.description" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" (click)="closeCreateForm()">Cancel</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="courseForm.invalid">Save course</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="isCreateFormOpen" class="modal-backdrop fade show" (click)="closeCreateForm()"></div>
+
+    <div *ngIf="isDeleteConfirmOpen" class="modal fade show" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="delete-course-title">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="delete-course-title" class="modal-title">Delete course?</h2>
+                    <button type="button" class="btn-close" aria-label="Close" (click)="closeDeleteConfirmation()"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to delete <strong>{{ courseToDelete?.title }}</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" (click)="closeDeleteConfirmation()">Cancel</button>
+                    <button type="button" class="btn btn-danger" (click)="confirmDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="isDeleteConfirmOpen" class="modal-backdrop fade show" (click)="closeDeleteConfirmation()"></div>
+</main>

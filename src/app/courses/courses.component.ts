@@ -1,123 +1,115 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Store } from '@ngrx/store';
 
 import { getCourses } from './states/courses.selector';
 import { AppState } from '../app.state';
+import { Courses } from './model/courses.model';
+import { createCourse, updateCourse, deleteCourse } from './states/courses.action';
 
 @Component({
     selector: 'app-courses',
-    template: `
-        <main class="courses-page">
-            <header class="courses-page__header">
-                <div>
-                    <p class="courses-page__eyebrow">Learning library</p>
-                    <h1>Explore courses</h1>
-                </div>
-                <span class="courses-page__count">{{ (courses$ | async)?.length }} courses</span>
-            </header>
-
-            <section class="course-grid" aria-label="Available courses">
-                <app-course-card
-                    *ngFor="let course of courses$ | async"
-                    [course]="course"
-                    (edit)="onEdit($event)"
-                    (delete)="onDelete($event)"
-                    (information)="onInformation($event)">
-                </app-course-card>
-            </section>
-        </main>
-    `,
-    styles: [`
-        :host {
-            display: block;
-            min-height: 100vh;
-            background: #f5f8f7;
-        }
-
-        .courses-page {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 48px 24px;
-        }
-
-        .courses-page__header {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .courses-page__eyebrow {
-            margin: 0 0 8px;
-            color: #d9653b;
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-
-        h1 {
-            margin: 0;
-            color: #17252f;
-            font-size: clamp(2rem, 4vw, 3rem);
-            line-height: 1;
-        }
-
-        .courses-page__count {
-            color: #63717a;
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
-
-        .course-grid {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: stretch;
-            gap: 24px;
-        }
-
-        app-course-card {
-            flex: 1 1 290px;
-            min-width: 260px;
-            max-width: 370px;
-        }
-
-        @media (max-width: 640px) {
-            .courses-page {
-                padding: 32px 16px;
-            }
-
-            .courses-page__header {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            app-course-card {
-                max-width: none;
-            }
-        }
-    `],
+    templateUrl: './courses.component.html',
+    styleUrls: ['./courses.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoursesComponent {
-
     courses$ = this._store.select(getCourses);
+    searchTerm = '';
+    isCreateFormOpen = false;
+    isEditFormOpen = false;
+    isDeleteConfirmOpen = false;
+    courseToDelete: Courses | null = null;
+    newCourse: Courses = this.createEmptyCourse();
 
     constructor(private _store: Store<AppState>) {
-
     }
 
-    onEdit(course: any): void {
+    onSearch(searchTerm: string): void {
+        this.searchTerm = searchTerm;
+    }
+
+    openCreateForm(): void {
+        this.newCourse = this.createEmptyCourse();
+        this.isCreateFormOpen = true;
+    }
+
+    closeCreateForm(): void {
+        this.isCreateFormOpen = false;
+    }
+
+    onCreateCourse(form: NgForm): void {
+        if (form.invalid) {
+            return;
+        }
+
+        if(this.isEditFormOpen) {
+            const updateValue = {
+                id: this.newCourse.id,
+                ...form.value,
+            }
+            this._store.dispatch(updateCourse({course: updateValue}));
+        } else {
+            this._store.dispatch(createCourse({ course: this.newCourse }));
+        }
+        this.closeCreateForm();
+        this.isEditFormOpen =  false;
+    }
+
+    filterCourses(courses: Courses[]): Courses[] {
+        const searchTerm = this.searchTerm.trim().toLowerCase();
+
+        if (!searchTerm) {
+            return courses;
+        }
+
+        return courses.filter((course) =>
+            [course.title, course.description, course.catagory, course.author]
+                .some((value) => value.toLowerCase().includes(searchTerm))
+        );
+    }
+
+    onEdit(course: Courses): void {
+
+         this.newCourse = course;
+        this.isCreateFormOpen = false;
+         this.isEditFormOpen = true;
         console.log('Edit course', course);
     }
 
-    onDelete(course: any): void {
-        console.log('Delete course', course);
+    onDelete(course: Courses): void {
+        this.courseToDelete = course;
+        this.isDeleteConfirmOpen = true;
     }
 
-    onInformation(course: any): void {
+    closeDeleteConfirmation(): void {
+        this.isDeleteConfirmOpen = false;
+        this.courseToDelete = null;
+    }
+
+    confirmDelete(): void {
+        if (!this.courseToDelete) {
+            return;
+        }
+        console.log(this.courseToDelete);
+
+        this._store.dispatch(deleteCourse({id: this.courseToDelete.id}))
+        this.closeDeleteConfirmation();
+    }
+
+    onInformation(course: Courses): void {
         console.log('Course information', course);
+    }
+
+    private createEmptyCourse(): Courses {
+        return {
+            id: 0,
+            title: '',
+            description: '',
+            catagory: '',
+            price: 0,
+            imageUrl: './assets/angular.webp',
+            author: '',
+        };
     }
 }
