@@ -13,7 +13,7 @@ import { AppState } from '../app.state';
                     <p class="courses-page__eyebrow">Learning library</p>
                     <h1>Explore courses</h1>
                 </div>
-                <span class="courses-page__count">{{ (courses$ | async)?.length || 0 }} courses</span>
+                <span class="courses-page__count">{{ (courses$ | async)?.length }} courses</span>
             </header>
 
             <section class="course-grid" aria-label="Available courses">
