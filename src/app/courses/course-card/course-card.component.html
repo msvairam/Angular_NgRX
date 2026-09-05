@@ -1,0 +1,30 @@
+<article class="course-card">
+    <div class="course-card__image-wrap">
+        <img class="course-card__image" [src]="course.imageUrl" [alt]="course.title" />
+        <span class="course-card__category">{{ course.catagory }}</span>
+    </div>
+
+    <div class="course-card__content">
+        <div class="course-card__heading">
+            <h2>{{ course.title }}</h2>
+            <span class="course-card__price">{{ course.price | currency }}</span>
+        </div>
+
+        <p class="course-card__description">{{ course.description }}</p>
+
+        <div class="course-card__actions">
+            <button type="button" class="course-card__action course-card__action--info" (click)="onInformation()">
+                <span aria-hidden="true">i</span>
+                <span class="sr-only">Course information</span>
+            </button>
+            <button type="button" class="course-card__action" (click)="onEdit()">
+                <span aria-hidden="true">&#9998;</span>
+                <span class="sr-only">Edit course</span>
+            </button>
+            <button type="button" class="course-card__action course-card__action--delete" (click)="onDelete()">
+                <span aria-hidden="true">&#128465;</span>
+                <span class="sr-only">Delete course</span>
+            </button>
+        </div>
+    </div>
+</article>

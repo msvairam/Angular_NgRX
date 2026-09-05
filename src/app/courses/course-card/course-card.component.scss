@@ -1,0 +1,142 @@
+:host {
+    display: block;
+}
+
+.course-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 100%;
+    border: 1px solid #e4e7ec;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(22, 34, 51, 0.08);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 34px rgba(22, 34, 51, 0.13);
+}
+
+.course-card__image-wrap {
+    position: relative;
+    height: 176px;
+    overflow: hidden;
+    background: #dfe8e5;
+}
+
+.course-card__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.course-card__category {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #176b5d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.course-card__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+}
+
+.course-card__heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.course-card h2 {
+    margin: 0;
+    color: #17252f;
+    font-size: 1.15rem;
+    line-height: 1.25;
+}
+
+.course-card__price {
+    flex: 0 0 auto;
+    color: #d9653b;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.course-card__description {
+    display: -webkit-box;
+    flex: 1;
+    margin: 0;
+    overflow: hidden;
+    color: #63717a;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.course-card__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px solid #edf0f1;
+}
+
+.course-card__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    background: #f0f4f3;
+    color: #2a4b4a;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.course-card__action:hover,
+.course-card__action:focus-visible {
+    background: #d8ebe5;
+    color: #125c50;
+    outline: none;
+}
+
+.course-card__action--info {
+    font-family: Georgia, serif;
+    font-size: 1.1rem;
+}
+
+.course-card__action--delete:hover,
+.course-card__action--delete:focus-visible {
+    background: #fbe5df;
+    color: #b8462a;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
